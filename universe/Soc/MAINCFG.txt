@@ -1,0 +1,6 @@
+Level 22
+LevelName = Waiting Room
+Act = 0
+MusicSlot = 62
+TypeOfLevel = 1
+SkyNum = 56
