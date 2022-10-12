@@ -50,7 +50,7 @@ SU.Fuse = function(mobj)
 			mo.scale = 2*FRACUNIT
 			mo.health = mobj.health
 			
-			if (suitems[mo.health].sutype & SUT_SPECIAL) or (suitems[mo.health].rarity > 90) -- Was less than 10, how about greater than 90?
+			if (suitems[mo.health].sutype & SUT_SPECIAL) or (suitems[mo.health].rarity < 10)
 				mo.color = SKINCOLOR_RED // Red rare items!
 			elseif (suitems[mo.health].sutype & SUT_WEAPON)
 				mo.color = SKINCOLOR_BLUE // Blue weapons

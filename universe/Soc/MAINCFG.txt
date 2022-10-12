@@ -10,4 +10,5 @@ LevelName = Pioneer
 Act = 2
 NoZone = 1
 Music = GUILD
+SkyNum = 749
 NextLevel = S0
