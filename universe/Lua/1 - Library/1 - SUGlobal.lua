@@ -11,8 +11,8 @@ rawset(_G, "sutype_t", {})
 rawset(_G, "suitems", {})
 rawset(_G, "iteminfo", {})
 
-rawset(_G, "SULOBBYMAP", 22)
-rawset(_G, "SUHUBMAP", 23)
+rawset(_G, "SULOBBYMAP", 748)
+rawset(_G, "SUHUBMAP", 749)
 
 rawset(_G, "createFlags", function(tname, t)
     for i = 1,#t do

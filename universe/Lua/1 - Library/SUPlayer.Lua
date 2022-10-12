@@ -36,6 +36,9 @@ SU.InitPlayer = function(player)
 	--player.accelstart = ($*2)/3
 	--player.acceleration = ($*2)/3
 	player.jumpfactor = (2*($)/ 3)
+	player.charflags = $|SF_NOJUMPSPIN|SF_NOJUMPDAMAGE
+	player.charability = CA_NONE
+	player.charability2 = CA2_NONE
 end
 
 SU.LevelUp = function(player, amount)

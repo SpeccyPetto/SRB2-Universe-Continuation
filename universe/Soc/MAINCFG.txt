@@ -1,6 +1,13 @@
-Level 22
-LevelName = Waiting Room
-Act = 0
-MusicSlot = 62
-TypeOfLevel = 1
-SkyNum = 56
+Level S0
+LevelName = SRB2 Universe Lobby
+NoZone = 1
+Music = MAPS0M
+SkyNum = 21
+NextLevel = S1
+
+Level S1
+LevelName = Pioneer
+Act = 2
+NoZone = 1
+Music = GUILD
+NextLevel = S0
