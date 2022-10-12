@@ -1136,10 +1136,10 @@ SU.InitItems = function()
 		itm.rarity = SU.CalcItemRarity(i)
 
 		// Comment this out when the slope calculation isn't buggy! X_x
-		--if (itm.name and itm.damage and itm.rarity)
+		if (itm.name and itm.damage and itm.rarity)
 			--print("Item: "+itm.name+" | Damage: "+itm.damage+" | Rarity: "+itm.rarity)
 			print(string.format("Item: %21s | Damage: %3s | Rarity: %3s", itm.name, itm.damage, itm.rarity))
-		--end
+		end
 	end
 
 	-- Debugging info
