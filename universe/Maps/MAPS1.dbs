@@ -22,11 +22,11 @@ maps
 				notfortesting = 0;
 			}
 		}
-		defaulttoptexture = "REDWALL";
+		defaulttoptexture = "THZRAIL";
 		overridemiddletexture = false;
-		viewpositionx = 6086.505f;
-		viewpositiony = 1937.159f;
-		viewscale = 0.07546957f;
+		viewpositionx = 3729.864f;
+		viewpositiony = -1090.086f;
+		viewscale = 0.1275436f;
 		overridefloortexture = false;
 		customceilheight = 128;
 		customfloorheight = 0;
@@ -49,7 +49,7 @@ maps
 		overridetoptexture = false;
 		custombrightness = 196;
 		overrideceiltexture = false;
-		defaultwalltexture = "REDWALL";
-		defaultbottomtexture = "REDWALL";
+		defaultwalltexture = "THZRAIL";
+		defaultbottomtexture = "THZRAIL";
 	}
 }
