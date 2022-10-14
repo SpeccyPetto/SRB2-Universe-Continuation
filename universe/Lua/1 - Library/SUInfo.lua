@@ -91,19 +91,19 @@ thing = MT_STARTTELEPORT
 mobjinfo[thing].spawnstate = S_INVISIBLE	
 mobjinfo[thing].radius = 32*FRACUNIT
 mobjinfo[thing].height = 96*FRACUNIT
-mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY|MF_SPECIAL
+mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY--|MF_SPECIAL
 
 thing = MT_ENDTELEPORT
 mobjinfo[thing].spawnstate = S_INVISIBLE
 mobjinfo[thing].radius = 32*FRACUNIT
 mobjinfo[thing].height = 96*FRACUNIT
-mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY|MF_SPECIAL
+mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY--|MF_SPECIAL
 
 thing = MT_TELEPIPE
 mobjinfo[thing].spawnstate = S_NULL	
 mobjinfo[thing].radius = 32*FRACUNIT
 mobjinfo[thing].height = 96*FRACUNIT
-mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY|MF_SPECIAL
+mobjinfo[thing].flags = MF_NOSECTOR|MF_NOGRAVITY--|MF_SPECIAL
 
 thing = MT_TELESPARK1
 mobjinfo[thing].spawnstate = S_TELESPARK1
