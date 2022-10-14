@@ -136,8 +136,8 @@ SU.Hud = function(v, player, c)
 			// Max 10 characters
 			local mpname = string.sub(p.name, 1, string.find(p.name, " "))
 			--string.match(pname, "%S+")
-			if mpname and (string.len(pname) > 10)
-				mpname = string.sub($, 1, 10)
+			if mpname and (string.len(pname) > 12)
+				mpname = string.sub($, 1, 12)
 			end
 			
 			// Draw the numbers and the name.
@@ -164,5 +164,27 @@ SU.Hud = function(v, player, c)
 			
 			y = $ + suhudinfo.HUD_SUBG.y + suhudinfo.HUD_SUNAME.y + 30
 		end
+	end
+end
+
+SU.DrawTeleportMenu = function(v, player, c)
+
+	if player.supipe == 0 then return end
+
+	if player.supipemenuchoices[1] == nil then return end
+
+	v.drawString(140 - 24, 70 - 16, "Teleport to:", V_SNAPTOLEFT|V_SNAPTOTOP)
+
+	if player.supipe == 1 then
+		local choice = player.supipemenuchoices[1] 
+		v.drawString(160-(v.stringWidth(choice.name)/2), 80, choice.name, V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP)
+	elseif player.supipe == 2 then
+		local choice = player.supipemenuchoices[1] 
+		v.drawString(160-(v.stringWidth(choice.name)/2), 80, choice.name, V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP)
+	elseif player.supipe == 3 then
+		local choice = player.supipemenuchoices[1] 
+		v.drawString(160-(v.stringWidth(choice.name)/2), 80, choice.name, V_YELLOWMAP|V_SNAPTOLEFT|V_SNAPTOTOP)
+	else
+		
 	end
 end

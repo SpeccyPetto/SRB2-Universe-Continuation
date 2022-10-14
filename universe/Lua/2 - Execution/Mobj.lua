@@ -6,6 +6,10 @@ addHook("TouchSpecial", function(special, toucher)
 	end
 end)
 
+addHook("MobjCollide", SU.TelepipeCollide, MT_STARTTELEPORT)
+addHook("MobjCollide", SU.TelepipeCollide, MT_ENDTELEPORT)
+addHook("MobjCollide", SU.TelepipeCollide, MT_TELEPIPE)
+
 addHook("MobjDamage", function(mobj, inflictor, source, damage)
 	if (universe) then
 		-- Mobj Damage

@@ -6,6 +6,30 @@ SU.ResetPlayer = function(p)
 	p.dashspeed = 0
 end
 
+SU.PlayerDeath = function(p)
+	if (netgame or splitscreen) then return end
+	G_SetCustomExitVars(SUHUBMAP, 1)
+	G_ExitLevel()
+end
+
+SU.PlayerRebirth = function(p)
+	if (gamemap ~= SUHUBMAP) then return end
+	if (p.suhp <= 0) then
+		P_TeleportMove(p.mo, 256*FRACUNIT, 160*FRACUNIT, 520*FRACUNIT)
+		p.suhp = p.sumaxhp
+		p.mo.angle = ANGLE_180
+		p.drawangle = p.mo.angle
+		S_ChangeMusic("MEDI", true, p)
+	else
+		if p.telepiped then
+			P_TeleportMove(p.mo, 2176*FRACUNIT, 640*FRACUNIT, 512*FRACUNIT)
+			p.mo.angle = ANGLE_270
+			p.drawangle = p.mo.angle
+			p.telepiped = 0
+		end
+	end
+end
+
 SU.InitPlayer = function(player)
 	player.sulevel = 0
 	player.suexp = 0
@@ -17,6 +41,11 @@ SU.InitPlayer = function(player)
 	player.sutp = 0
 	player.sumoney = 0
 	player.suitems = {} --[NUMSUITEMS]
+	player.supipe = 0
+	player.supipemenu = false
+	player.supipemenuchoices = {}
+	player.mapsvisited = {1}
+	player.telepiped = false
 
 	player.equipweapon = nil
 	player.equipbarrier = nil
@@ -127,6 +156,21 @@ SU.GameplayStuff = function(player)
 		//player.equipmag = itm_mag
 	end
 
+	if (gamemap ~= SUHUBMAP) or (gamemap ~= SULOBBYMAP) then 
+		if player.telepiped then
+			if (player.telepiped == 1) and leveltime < 2 then
+				for mobj in mobjs.iterate() do
+					if (mobj.type == MT_ENDTELEPORT) then
+						P_TeleportMove(player.mo, mobj.x, mobj.y, mobj.z)
+						player.telepiped = 0
+					end
+				end
+			end
+		end
+	end
+
+	player.exiting = 0 -- Always have it be 0, you shouldn't be exiting from anything BUT telepipes.
+
 	--if (leveltime&1)
 	--	player.suhp = $ - 1
 	--	player.sutp = $ - 1
@@ -224,6 +268,82 @@ SU.GameplayStuff = function(player)
 	if (player.suatk > 0)
 		player.suatk = $ - 1
 	end
+
+	/////////////////////////
+	// TELEPIPE MANAGEMENT //
+	/////////////////////////
+
+	if not player.supipemenu then
+		player.supipe = 0 -- Set this to 0 every tic if not in a telepipe menu-
+		player.supipemenucur = 1
+	end
+
+	if (player.supipemenu) then
+		player.supipemenuchoices = {}
+
+		if player.supipe == 1 then
+			table.insert(player.supipemenuchoices, {})
+
+			local value = gamemap-1
+			if value < 1 then value = SUHUBMAP end
+			if mapheaderinfo[value].lvlttl ~= mapheaderinfo[gamemap].lvlttl then value = SUHUBMAP end
+			player.supipemenuchoices[#player.supipemenuchoices].value = value
+
+			local name = mapheaderinfo[value].lvlttl
+			if not (mapheaderinfo[value].levelflags & LF_NOZONE) then name = $ .. " Zone " end
+			if mapheaderinfo[value].actnum then name = $ .. " " .. tostring(mapheaderinfo[value].actnum) end
+			player.supipemenuchoices[#player.supipemenuchoices].name = name
+			player.telepiped = 1
+		elseif player.supipe == 2 then
+			table.insert(player.supipemenuchoices, {})
+
+			local value = gamemap+1
+			if value > 1035 then value = SUHUBMAP end
+			if mapheaderinfo[value].lvlttl ~= mapheaderinfo[gamemap].lvlttl then value = SUHUBMAP end
+			player.supipemenuchoices[#player.supipemenuchoices].value = value
+
+			local name = mapheaderinfo[value].lvlttl
+			if not (mapheaderinfo[value].levelflags & LF_NOZONE) then name = $ .. " Zone " end
+			if mapheaderinfo[value].actnum then name = $ .. " " .. tostring(mapheaderinfo[value].actnum) end
+			player.supipemenuchoices[#player.supipemenuchoices].name = name
+			player.telepiped = 2
+		elseif player.supipe == 3 then
+			table.insert(player.supipemenuchoices, {})
+
+			local value = SUHUBMAP
+			if (gamemap == SUHUBMAP) then value = SULOBBYMAP end
+			player.supipemenuchoices[#player.supipemenuchoices].value = value
+
+			local name = mapheaderinfo[value].lvlttl
+			if not (mapheaderinfo[value].levelflags & LF_NOZONE) then name = $ .. " Zone " end
+			if mapheaderinfo[value].actnum then name = $ .. " " .. tostring(mapheaderinfo[value].actnum) end
+			player.supipemenuchoices[#player.supipemenuchoices].name = name
+		elseif player.supipe == 4 then
+			for i=1, player.mapsvisited do
+				if (player.mapsvisited[i] == SUHUBMAP) or (player.mapsvisited[i] == SULOBBYMAP) then continue end
+				table.insert(player.supipemenuchoices, {})
+
+				local value = player.mapsvisited[i]
+				player.supipemenuchoices[#player.supipemenuchoices].value = value
+
+				local name = mapheaderinfo[value].lvlttl
+				if not (mapheaderinfo[value].levelflags & LF_NOZONE) then name = $ .. " Zone" end
+				if mapheaderinfo[value].actnum then name = $ .. " " .. tostring(mapheaderinfo[value].actnum) end
+				player.supipemenuchoices[#player.supipemenuchoices].name = name
+			end
+		end
+
+		player.pflags = $|PF_FULLSTASIS
+		player.powers[pw_flashing] = TICRATE
+
+		if (player.cmd.buttons & BT_JUMP) then
+			if not (netgame or splitscreen) then 
+				player.supipemenu = false
+				G_SetCustomExitVars(player.supipemenuchoices[player.supipemenucur].value, 1) 
+				G_ExitLevel() 
+			end
+		end
+	end
 end
 
 SU.doJump = function(player)
@@ -238,4 +358,4 @@ SU.doJump = function(player)
 		P_SetObjectMomZ(player.mo, 5*FRACUNIT/4, true)
 		return false
 	end
-end
+end 

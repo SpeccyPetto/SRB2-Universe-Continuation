@@ -184,7 +184,7 @@ SU.MobjProg = function(mobj)
 end
 
 SU.SpecialItems = function(special, toucher)
-
+	if (special.type == MT_STARTTELEPORT) or (special.type == MT_ENDTELEPORT) or (special.type == MT_TELEPIPE) then return true end
 	local player = toucher.player
 	local dummymo
 
@@ -258,22 +258,38 @@ SU.SpecialItems = function(special, toucher)
 			CONS_Printf(player, "* Collected a "+suitems[special.health].name)
 		end
 		return false
-	elseif (special.type == MT_STARTTELEPORT) and (player.cmd.buttons & BT_TOSSFLAG)
-		--player.cmd.buttons = $ & ~(BT_TOSSFLAG)
-		--SU_Teleport2LastMenu
-		return true
-	elseif (special.type == MT_ENDTELEPORT) and (player.cmd.buttons & BT_TOSSFLAG)
-		--player.cmd.buttons = $ & ~(BT_TOSSFLAG)
-		--SU_Teleport2NextMenu
-		return true
-	elseif (special.type == MT_TELEPIPE) and (player.cmd.buttons & BT_TOSSFLAG)
-		--player.cmd.buttons = $ & ~(BT_TOSSFLAG)
-		--SU_Teleport2HUBMenu
-		return true
 	end
 end
 
+SU.TelepipeCollide = function(telepipe, toucher)
+	if not (toucher and toucher.valid) then return end
+	if not (toucher.type == MT_PLAYER) then return end
+	if not P_IsObjectOnGround(toucher) then return end
+	local player = toucher.player
+
+	if (telepipe.type == MT_STARTTELEPORT)
+		if not (player.cmd.buttons & BT_TOSSFLAG) then return false end		
+		player.supipe = 1
+		player.supipemenu = true
+	elseif (telepipe.type == MT_ENDTELEPORT)
+		if not (player.cmd.buttons & BT_TOSSFLAG) then return false end		
+		player.supipe = 2
+		player.supipemenu = true
+	elseif (telepipe.type == MT_TELEPIPE)
+		if not (player.cmd.buttons & BT_TOSSFLAG) then return false end
+		if (gamemap == SULOBBYMAP) or (gamemap == SUHUBMAP) then
+			player.supipe = 3
+		else
+			player.supipe = 4
+		end
+		player.supipemenu = true
+	end
+
+	return false
+end
+
 SU.TouchSpecial = function(special, toucher)
+	if (special.type == MT_STARTTELEPORT) or (special.type == MT_ENDTELEPORT) or (special.type == MT_TELEPIPE) then return true end
 	if toucher and toucher.valid
 		and special and special.valid
 		and toucher.player and toucher.player.valid and not toucher.player.spectator
@@ -799,6 +815,12 @@ SU.MapLoad = function(mapnum)
 			else
 				z = mthing.z << FRACBITS
 			end
+
+			local bossmap = false
+			for mobj in mobjs.iterate() do
+				if (mobj.flags & MF_BOSS) then bossmap = true end
+			end
+			if bossmap then return end
 			
 			local mo = P_SpawnMobj(x, y, z, MT_STARTTELEPORT)
 			mo.spawnpoint = mthing
@@ -819,6 +841,28 @@ SU.MapLoad = function(mapnum)
 			end
 			--print(dist)
 			--print("Object spawned at:"+x/FRACUNIT+" "+y/FRACUNIT+" "+z/FRACUNIT)
+		elseif (mthing.type == 501)
+			local x = mthing.x << FRACBITS
+			local y = mthing.y << FRACBITS
+			local ss = R_PointInSubsector(x, y)
+			local z
+			if (mthing.options >> 5)
+				z = ss.sector.floorheight + ((mthing.options >> 5) << FRACBITS)
+			else
+				z = mthing.z << FRACBITS
+			end
+
+			local bossmap = false
+			for mobj in mobjs.iterate() do
+				if (mobj.flags & MF_BOSS) then bossmap = true end
+			end
+			if bossmap then return end
+			
+			local mo = P_SpawnMobj(x, y, z, MT_ENDTELEPORT)
+			mo.spawnpoint = mthing
+			if mthing.mobj then
+				P_RemoveMobj(mthing.mobj)
+			end
 		end
 	end
 end
